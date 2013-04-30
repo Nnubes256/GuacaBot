@@ -15,6 +15,37 @@
             body {
                 background-color: rgb(0,0,0);
                 display: block;
+            /* Unused classes */
+            }
+            .text-black {
+                color: #000000;
+            }
+            .text-red {
+                color: #A00000;
+            }
+            .text-green {
+                color: #0A0000;
+            }
+            .text-blue {
+                color: #00A000;
+            }
+            .text-magenta {
+                color: #C428C9;
+            }
+            .text-cyan {
+                color: #0AA000;
+            }
+            .text-white {
+                color: #FFFFFF;
+            }
+            .text-bold {
+                font-weight:bold;
+            }
+            .text-italic {
+                font-style:italic;
+            }
+            .text-underline {
+                text-decoration: underline;
             }
         </style>
         <script type="text/javascript">
@@ -22,21 +53,6 @@
         // aquí ponemos la IP PÚBLICA
         var websocket = io.connect("http://localhost");
         function insertAfter(referenceNode, newNode) {referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);}
-        ansicodes = {
-        'reset': '\033[0m',
-        'bold': '\033[1m',
-        'italic': '\033[3m',
-        'underline': '\033[4m',
-        'blink': '\033[5m',
-        'black': '\033[30m',
-        'red': '\033[31m',
-        'green': '\033[32m',
-        'yellow': '\033[33m',
-        'blue': '\033[34m',
-        'magenta': '\033[35m',
-        'cyan': '\033[36m',
-        'white': '\033[37m',
-        }
          
         window.onload = function() {
             websocket.on("sendEvent", function(data){

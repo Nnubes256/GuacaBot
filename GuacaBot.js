@@ -18,7 +18,7 @@ ansicodes = {
 'magenta': '\033[35m',
 'cyan': '\033[36m',
 'white': '\033[37m',
-}
+};
 codes = {
     white: '\u000300',
     black: '\u000301',
@@ -45,9 +45,10 @@ codes = {
 // Nodejitsu compatibility
 var app = require('http').createServer(handler)
   , io = require('socket.io').listen(app)
-  , fs = require('fs')
+  , fs = require('fs');
 
 app.listen(150);
+io.set('log level', 0);
 
 function handler (req, res) {
   fs.readFile(__dirname + '/index.html',
@@ -61,13 +62,6 @@ function handler (req, res) {
     res.end(data);
   });
 }
-
-io.sockets.on('connection', function (socket) {
-  socket.emit('news', { hello: 'world' });
-  socket.on('my other event', function (data) {
-    console.log(data);
-  });
-});
 // Random stuff, ignore
 var startsWith = function (strToEv,str) {
   	return strToEv.split("").slice(0, str.length) == str;
@@ -109,7 +103,7 @@ var minusComCount = setInterval(function(){
     }
     if (comCount >= comMaxPerTenSec) {
         c.say(config.channels,"I think I'm being spammed by my commands. I'm enabling my anti-spam mechanism");
-        console.log(ansicodes.bold + ansicodes.red + "[ALERT] " + ansicodes.reset + ansicodes.reset + ansicodes.yellow + "Anti-spammer was auto-enabled due to command abuse." + ansicodes.reset);
+        sendToLog(ansicodes.bold + ansicodes.red + "[ALERT] " + ansicodes.reset + ansicodes.reset + ansicodes.yellow + "Anti-spammer was auto-enabled due to command abuse." + ansicodes.reset);
         isLockdownDisabled = false;
     }
 },10000);
@@ -129,8 +123,7 @@ c.addListener('raw', function(message) {
 		case "NOTICE":
         // Log the notice to console and to log file, then break
 			var receivedNotice = message.args[1];
-			console.log(ansicodes.blue + ansicodes.bold + "[NOTICE] " + ansicodes.reset + ansicodes.reset + ansicodes.yellow + receivedNotice + ansicodes.reset);
-			logStuff("[NOTICE] " + receivedNotice);
+			sendToLog(ansicodes.blue + ansicodes.bold + "[NOTICE] " + ansicodes.reset + ansicodes.reset + ansicodes.yellow + receivedNotice + ansicodes.reset);
 			break;
 		// If the input is the welcoming message of the server
 		case "001"||"002"||"003":
@@ -142,24 +135,23 @@ c.addListener('raw', function(message) {
 		case "rpl_luserop"||"rpl_luserchannels":
 			var secondArg = message.args[1];
 			var reMsg = message.args[2];
-			console.log(ansicodes.cyan + ansicodes.bold + "[STATS] " + ansicodes.reset + ansicodes.reset + ansicodes.magenta + "There are " + secondArg + " " + reMsg + ansicodes.reset);
-			logStuff("[STATS] There are " + secondArg + " " + reMsg);
+			sendToLog(ansicodes.cyan + ansicodes.bold + "[STATS] " + ansicodes.reset + ansicodes.reset + ansicodes.magenta + "There are " + secondArg + " " + reMsg + ansicodes.reset);
 			break;
 		case "rpl_luserclient"||"rpl_luserme"||"rpl_statsconn":
 			var recMsg = message.args[1];
-			console.log(ansicodes.cyan + ansicodes.bold + "[STATS] " + ansicodes.reset + ansicodes.reset + ansicodes.magenta + recMsg + ansicodes.reset);
+			sendToLog(ansicodes.cyan + ansicodes.bold + "[STATS] " + ansicodes.reset + ansicodes.reset + ansicodes.magenta + recMsg + ansicodes.reset);
 			break;
 		case "rpl_localusers"||"rpl_globalusers":
 			var receMsg = message.args[3];
-			console.log(ansicodes.cyan + ansicodes.bold + "[STATS] " + ansicodes.reset + ansicodes.reset + ansicodes.magenta + receMsg + ansicodes.reset);
+			sendToLog(ansicodes.cyan + ansicodes.bold + "[STATS] " + ansicodes.reset + ansicodes.reset + ansicodes.magenta + receMsg + ansicodes.reset);
 			break;
 		// If the input is the topic from the channel
 		case "rpl_topic":
 			var topic = message.args[2];
 			var fromWho = message.args[1];
-			console.log(ansicodes.magenta + "--------- Topic from " + fromWho + ": ---------" + ansicodes.reset);
-			console.log(ansicodes.magenta + topic + ansicodes.reset);
-			console.log(ansicodes.magenta + "-----------------------------------------------" + ansicodes.reset);
+			sendToLog(ansicodes.magenta + "--------- Topic from " + fromWho + ": ---------" + ansicodes.reset);
+			sendToLog(ansicodes.magenta + topic + ansicodes.reset);
+			sendToLog(ansicodes.magenta + "-----------------------------------------------" + ansicodes.reset);
 			break;
 		// If it is a normal chat message
 		case "PRIVMSG":
@@ -195,22 +187,20 @@ c.addListener('raw', function(message) {
 			     	    c.say(usernick, "\u0002" + codes.orange +" !videoinfo [url] " + codes.dark_red +" -- " + codes.reset + " Given a YouTube/Vimeo video URL, shows its name.");
 			     	    c.say(usernick, "\u0002" + codes.orange +" !chuck  " + codes.dark_red + " -- " + codes.reset + " Get an instant Chuck Norris joke");
 			     	    c.say(usernick, "\u0002" + codes.dark_blue +"---------------------------------------------------------");
-			     	    console.log(ansicodes.blue + "[INFO] " + ansicodes.reset + ansicodes.yellow + usernick + " issued bot command: !guacahelp" + ansicodes.reset);
-			     	    logStuff("[INFO] " + usernick + " issued bot command: !guacahelp");
+			     	    sendToLog(ansicodes.blue + "[INFO] " + ansicodes.reset + ansicodes.yellow + usernick + " issued bot command: !guacahelp" + ansicodes.reset);
                         comCount = comCount + 6;
                     }
 			    } else if (/^!hello$/.test(reccMsg)) {
                     if (isLockdownDisabled){
 			     	    c.say(toChan,"\u0002" + codes.dark_red + "H" + codes.light_red + "e" + codes.orange + "l" + codes.yellow + "l" + codes.light_green + "o " + codes.dark_green + "W" + codes.light_blue + "o" + codes.dark_blue + "r" + codes.light_magenta + "l" + codes.magenta + "d" + codes.dark_red + "!");
-			     	    console.log(ansicodes.blue + "[INFO] " + ansicodes.reset + ansicodes.yellow + usernick + " issued bot command: !hello" + ansicodes.reset);
-			     	    logStuff("[INFO] " + usernick + " issued bot command: !hello");
+			     	    sendToLog(ansicodes.blue + "[INFO] " + ansicodes.reset + ansicodes.yellow + usernick + " issued bot command: !hello" + ansicodes.reset);
+			     	    sendToLog("[INFO] " + usernick + " issued bot command: !hello");
                         comCount++;
                     }
                 } else if (/^!eatnacho$/.test(reccMsg)) {
                     if (isLockdownDisabled){
 			     	    c.action(toChan," eats a nacho");
-			     	    console.log(ansicodes.blue + "[INFO] " + ansicodes.reset + ansicodes.yellow + usernick + " issued bot command: !eatnacho" + ansicodes.reset);
-			     	    logStuff("[INFO] " + usernick + " issued bot command: !eatnacho");
+			     	    sendToLog(ansicodes.blue + "[INFO] " + ansicodes.reset + ansicodes.yellow + usernick + " issued bot command: !eatnacho" + ansicodes.reset);
                         comCount++;
                     }
                 } else if (/^!time$/.test(reccMsg)) {
@@ -229,8 +219,7 @@ c.addListener('raw', function(message) {
 			     	        curSecond = "0" + curSecond;
 			     	    }
 			     	    c.say(toChan, "Current Time: " + curHour + ":" + curMinute + ":" + curSecond);
-			     	    console.log(ansicodes.blue + "[INFO] " + ansicodes.reset + ansicodes.yellow + usernick + " issued bot command: !time" + ansicodes.reset);
-			     	    logStuff("[INFO] " + usernick + " issued bot command: !time");
+			     	    sendToLog(ansicodes.blue + "[INFO] " + ansicodes.reset + ansicodes.yellow + usernick + " issued bot command: !time" + ansicodes.reset);
                         comCount++;
                     }
                 } else if (/^!date$/.test(reccMsg)) {
@@ -264,8 +253,7 @@ c.addListener('raw', function(message) {
 			     	    var curMonth = currentDate.getMonth() + 1;
 			     	    var curYear = currentDate.getFullYear();
 			     	    c.say(toChan, "For me, today's " + curWeekDay + ", " + curDay + "/" + curMonth + "/" + curYear + ".");
-			     	    console.log(ansicodes.blue + "[INFO] " + ansicodes.reset + ansicodes.yellow + usernick + " issued bot command: !date" + ansicodes.reset);
-			     	    logStuff("[INFO] " + usernick + " issued bot command: !time");
+			     	    sendToLog(ansicodes.blue + "[INFO] " + ansicodes.reset + ansicodes.yellow + usernick + " issued bot command: !date" + ansicodes.reset);
                         comCount++;
                     }
                 } else if (/^!8ball$/.test(reccMsg) || /^!8ball /.test(reccMsg)) {
@@ -302,8 +290,7 @@ c.addListener('raw', function(message) {
                             c.say(toChan,"To the question: " + arg);
 			     	    }
 			     	    c.say(toChan, "8 ball says: " + item);
-			     	    console.log(ansicodes.blue + "[INFO] " + ansicodes.reset + ansicodes.yellow + usernick + " issued bot command: !8ball with argument: " + arg + ansicodes.reset);
-			     	    logStuff("[INFO] " + usernick + " issued bot command: !8ball with arg: " + arg);
+			     	    sendToLog(ansicodes.blue + "[INFO] " + ansicodes.reset + ansicodes.yellow + usernick + " issued bot command: !8ball with argument: " + arg + ansicodes.reset);
                         comCount = comCount + 2;
                     }
                 } else if (/^!ccstatus$/.test(reccMsg)) {
@@ -327,8 +314,7 @@ c.addListener('raw', function(message) {
 			            		c.say(usernick, "Server Status: Probably offline");
 			            		c.say(usernick, "Error: " + err.error);
 			            		c.say(usernick, "-------------------");
-			            		console.log(ansicodes.blue + "[INFO] " + ansicodes.reset + ansicodes.yellow + usernick + " issued bot command: !ccstatus with result: Timeout Error" + ansicodes.reset);
-			            		logStuff("[INFO] " + usernick + " issued a bot command: !ccstatus with result: Timeout Error");
+			            		sendToLog(ansicodes.blue + "[INFO] " + ansicodes.reset + ansicodes.yellow + usernick + " issued bot command: !ccstatus with result: Timeout Error" + ansicodes.reset);
 			            	} else {
 			            		query.basic_stat(statCallback);
 			            	}
@@ -349,8 +335,7 @@ c.addListener('raw', function(message) {
 			                    c.say(usernick, "Players: " + numPlayers + "/" + maxPlayers);
 			                    c.say(usernick, "Server List MOTD: \'" + motd + "\'");
 			                    c.say(usernick, "-------------------");
-			                    console.log(ansicodes.blue + "[INFO] " + ansicodes.reset + ansicodes.yellow + usernick + " issued bot command: !ccstatus with result: Online, " + numPlayers + "/" + maxPlayers + ", \'" + motd + "'" + ansicodes.reset);
-			                    logStuff("[INFO] " + usernick + " issued a bot command: !ccstatus with result: Online, " + numPlayers + "/" + maxPlayers + ", \'" + motd + "'");
+			                    sendToLog(ansicodes.blue + "[INFO] " + ansicodes.reset + ansicodes.yellow + usernick + " issued bot command: !ccstatus with result: Online, " + numPlayers + "/" + maxPlayers + ", \'" + motd + "'" + ansicodes.reset);
 			                }
 			            	reqcount--;
 			            	if(reqcount<1){
@@ -370,13 +355,11 @@ c.addListener('raw', function(message) {
 			     	    if (VIWithArgs) {
 			     	    	vi.fetch(VIArg, function(err,data){
 			     	    		if(err){
-			     	    			console.log(ansicodes.blue + "[INFO] " + ansicodes.reset + ansicodes.yellow + usernick + " issued bot command: !videoname with argument: " + VIArg + " and result: Error:" + err + ansicodes.reset);
+			     	    			sendToLog(ansicodes.blue + "[INFO] " + ansicodes.reset + ansicodes.yellow + usernick + " issued bot command: !videoname with argument: " + VIArg + " and result: Error:" + err + ansicodes.reset);
 			     	    			c.say(toChan,"There was an error: " + err);
-			     	    			logStuff("[INFO] " + usernick + "issued bot command: !videoname with argument: " + VIArg + "and result: Error: " + err);
 			     	    		} else {
 			     	    			c.say(toChan,"Name: " + data.title);
-			     	    			console.log(ansicodes.blue + "[INFO] " + ansicodes.reset + ansicodes.yellow + usernick + " issued bot command: !videoname with argument: " + VIArg + " and result: Success(Name Got: " + data.title + ansicodes.reset);
-			     	    			logStuff("[INFO] " + usernick + "issued bot command: !videoname with argument: " + VIArg + " and result: Success(Name Got: " + data.title);
+			     	    			sendToLog(ansicodes.blue + "[INFO] " + ansicodes.reset + ansicodes.yellow + usernick + " issued bot command: !videoname with argument: " + VIArg + " and result: Success(Name Got: " + data.title + ansicodes.reset);
 			     	    		}
 			     	    	});
 			     	    }
@@ -396,25 +379,21 @@ c.addListener('raw', function(message) {
                           	    	var jokeNumber = fullRes.value.id;
                           	    	var finalJoke = joke.replace("&quot","'");
                           	    	c.say(toChan,"Num. " + jokeNumber + ": " + joke);
-                          	    	console.log(ansicodes.blue + "[INFO] " + ansicodes.reset + ansicodes.yellow + usernick + " issued bot command: !chuck with result: Success (joke number " + jokeNumber + ")" + ansicodes.reset);
-                          	    	logStuff("[INFO] " + usernick + " issued bot command: !chuck with result: Success (joke number " + jokeNumber + ")");
+                          	    	sendToLog("[INFO] " + usernick + " issued bot command: !chuck with result: Success (joke number " + jokeNumber + ")");
                           	    } else {
                           	    	c.say("I think there was an error getting the joke, so try again later.");
-                          	    	console.log(ansicodes.blue + "[INFO] " + ansicodes.reset + ansicodes.yellow + usernick + " issued bot command: !chuck with result: DB error: The response type wasn't 'success'." + ansicodes.reset);
-                          	    	logStuff("[INFO] " + usernick + " issued bot command: !chuck with result: DB error: The response type wasn't 'success'.");
+                          	    	sendToLog("[INFO] " + usernick + " issued bot command: !chuck with result: DB error: The response type wasn't 'success'.");
                           	    }
                             }).on("error", function(e){
                             	c.say("The Chuck Norris joke database appears to be unreachable :(. Try again later");
-                            	console.log(ansicodes.blue + "[INFO] " + ansicodes.reset + ansicodes.yellow + usernick + " issued bot command: !chuck with result: Connect error: " + e + ansicodes.reset);
-                            	logStuff("[INFO] " + usernick + " issued bot command: !chuck with result: Connect Error: " + e);
+                            	sendToLog(ansicodes.blue + "[INFO] " + ansicodes.reset + ansicodes.yellow + usernick + " issued bot command: !chuck with result: Connect error: " + e + ansicodes.reset);
                             });
                         });
                         comCount++;
                     }
                 } else {
 			     	// If it isn't a registered command, the bot will know that it is a chat message, so the bot will log it as chat
-			     	console.log(ansicodes.red + "[" + ansicodes.reset + ansicodes.yellow + toChan + ansicodes.reset + ansicodes.red + "] " + ansicodes.reset + ansicodes.yellow + "<" + ansicodes.reset + ansicodes.cyan + usernick + ansicodes.reset + ansicodes.yellow + "> " + ansicodes.reset + reccMsg);
-			     	logStuff("[" + toChan + "] " + "<" + usernick + "> " + reccMsg);
+			     	sendToLog(ansicodes.red + "[" + ansicodes.reset + ansicodes.yellow + toChan + ansicodes.reset + ansicodes.red + "] " + ansicodes.reset + ansicodes.cyan + usernick + ": " + ansicodes.reset + reccMsg);
 			    }
 			} else {
 			    break;
@@ -423,30 +402,33 @@ c.addListener('raw', function(message) {
 		break;
 	}
 });
-c.addListener('error', function(message) { console.log('error: ' + message) });
+c.addListener('error', function(message) { sendToLog('error: ' + message) });
 
 c.addListener('join', function(channel,nick,message) {
-	console.log(ansicodes.red + "[" + ansicodes.reset + ansicodes.yellow + channel + ansicodes.reset + ansicodes.red + "] " + ansicodes.reset + ansicodes.green + nick + " joined " + channel + ansicodes.reset);
+	sendToLog(ansicodes.red + "[" + ansicodes.reset + ansicodes.yellow + channel + ansicodes.reset + ansicodes.red + "] " + ansicodes.reset + ansicodes.green + nick + " joined " + channel + ansicodes.reset);
 	if(nick == "BriCookie") {
 		c.say(channel, "Hey Bri! GuacaBot salutes you!");
 	}
-	logStuff("[" + channel + "] " + nick + " joined " + channel);
 });
 c.addListener("part", function(channel,nick,reason) {
-	console.log(ansicodes.red + "[" + ansicodes.reset + ansicodes.yellow + channel + ansicodes.reset + ansicodes.red + "] " + ansicodes.reset + ansicodes.cyan + nick + " left " + channel + " (" + reason + ")" + ansicodes.reset);
-	logStuff("[" + channel + "] " + nick + " left " + channel + " (" + reason + ")");
+	sendToLog(ansicodes.red + "[" + ansicodes.reset + ansicodes.yellow + channel + ansicodes.reset + ansicodes.red + "] " + ansicodes.reset + ansicodes.cyan + nick + " left " + channel + " (" + reason + ")" + ansicodes.reset);
 });
 c.addListener("quit", function(nick,reason) {
-	console.log(ansicodes.red + "[" + ansicodes.reset + ansicodes.yellow + "All channels" + ansicodes.reset + ansicodes.red + "] " + ansicodes.reset + ansicodes.red + nick + " has quit IRC (" + reason + ")" + ansicodes.reset);
-	logStuff ("[All channels]" + nick + " has quit IRC (" + reason + ")");
+	sendToLog(ansicodes.red + "[" + ansicodes.reset + ansicodes.yellow + "All channels" + ansicodes.reset + ansicodes.red + "] " + ansicodes.reset + ansicodes.red + nick + " has quit IRC (" + reason + ")" + ansicodes.reset);
 });
 c.addListener("kick", function(channel, nick, by, reason) {
-	console.log(ansicodes.red + "[" + ansicodes.reset + ansicodes.yellow + channel + ansicodes.reset + ansicodes.red + "] " + ansicodes.reset + ansicodes.blue + nick + " was kicked by " + by + " (" + reason + ")");
+	sendToLog(ansicodes.red + "[" + ansicodes.reset + ansicodes.yellow + channel + ansicodes.reset + ansicodes.red + "] " + ansicodes.reset + ansicodes.blue + nick + " was kicked by " + by + " (" + reason + ")");
 });
-var logStuff = function(message) {
+var colorStrip = function (str) {
+  return str.replace(/\033\[[0-9;]*m/g, '')
+}
+var sendToLog = function(message) {
+	console.log(message);
+	var parsedMsg = colorStrip(message);
 	fs.open('GuacaLogOutput.log', 'a', function( e, id ) {
-        fs.write( id, message+'\n', null, 'utf8', function(){
+        fs.write( id, parsedMsg+'\n', null, 'utf8', function(){
             fs.close(id, function(){ });
         });
     });
+    io.sockets.emit('sendEvent',{"text":parsedMsg});
 }
