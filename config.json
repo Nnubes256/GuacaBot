@@ -1,12 +1,27 @@
 {
+	// Host where the bot will connect
 	"host":"irc.alphachat.net",
+
+	// Nickname of the bot
 	"nickname":"GuacaBot",
-	"channels":["#CookieCraft","#CookieCoffee"],
+
+	// Channels where the bot will connect
+	"channels":["#CookieCoffee"],
+
+	// Username and realname of the bot
 	"username":"MrGuaca",
 	"realname":"The bot of Nacho",
+
+	// MCStatus(Bukkit flavour 2) config
 	"mcquery":{
+
+		// Where will the bot query to?
 		"host":"server.cookiecrafters.co.uk",
+
+		// The port of the server
 	    "port": 25565
 	},
+
+	// Unused
 	"commandPrefix": "!"
 }
