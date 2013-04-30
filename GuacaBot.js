@@ -42,7 +42,8 @@ codes = {
 // ############################
 // ##      IRC bot base      ##
 // ############################
-// Nodejitsu compatibility
+
+// Webserver
 var app = require('http').createServer(handler)
   , io = require('socket.io').listen(app)
   , fs = require('fs');
@@ -84,7 +85,7 @@ var path = require('path');
 var f = path.resolve('./config.json');
 var config = require(f);
 
-// WORK IN PROGRESS!
+// Library used by !videoname
 var vi = require("./lib/videoinfo/lib/main.js");
 
 // Bot creation and connection
@@ -160,21 +161,33 @@ c.addListener('raw', function(message) {
 			    var usernick = message.nick;
 			    var reccMsg = message.args[1];
                 var toChan = message.args[0];
-                if(/^[A-ZFa-z0-9_-]{3,16} connected$/.test(reccMsg) /*&& usernick == "+CookieCraft"*/) {
+                // Bukkit Flavour 1:
+                //
+                // If you use CraftIRC or another plugin that outputs the server activity(chat/joins/quits/etc...) you can make the bot say something when a user connects at your server.
+                // You can make the bot say something default to all users, and, by the way, you can input messages to custom users.
+                // Just uncomment the line below, and, at the regular expression, replace the word "connnected" by the connecting message.
+                // For example, if your message is {user} joined the game, change "connected" for "joined the game".
+                // Also, remind that this function DOESN'T SUPPORT ANY TYPE OF NICK. It will only read the valid Minecraft usernames.
+                /* 
+                if(/^[A-ZFa-z0-9_-]{3,16} connected$/.test(reccMsg)) {
 			    	var helperSplit = reccMsg.split(" ");
 			    	var userConnected = helperSplit[0];
 			    	switch(userConnected) {
-			    		case "bricookie":
-			    		    setTimeout(function(){c.say(toChan, "Hey Bri! GuacaBot salutes you.")},2000);
-			    		case "stevieb64":
-			    		    setTimeout(function(){c.say(toChan, "Hmmm...")},2000);
-			    		    setTimeout(function(){c.say(toChan, "So you are the one who call 'Stevie', right?")},4000);
-			    		    setTimeout(function(){c.say(toChan, "Nice to meet you.")},6000);
-			    		    setTimeout(function(){c.say(toChan, "I'm GuacaBot, an IRC bot programmed by Nacho (Nnubes256).")},8000);
+			    		// Modify these "foo" and "bar" for the custom names, and modify the second argument of c.say for customize the messages.
+			    		// userConnected = user who connected
+			    		case "foo":
+			    		    setTimeout(function(){c.say(toChan, "Hi foo")},2000);
+			    		    break;
+			    		case "bar":
+			    		    setTimeout(function(){c.say(toChan, "Hey!")},2000);
+			    		    setTimeout(function(){c.say(toChan, "How are you?")},4000);
+			    		    break;
 			    		default:
 			    		    setTimeout(function(){c.say(toChan, "Hello there " + userConnected)},2000);
+			    		    break;
 			    	}
 			    }
+			    */
 			    if(/^!guacahelp$/.test(reccMsg)) {
                     if (isLockdownDisabled){
 			     	    c.say(usernick, "\u0002" + codes.dark_blue +"--------------------- " + codes.orange + "GuacaBot Help" + codes.dark_blue + " -----------------------");
@@ -183,8 +196,8 @@ c.addListener('raw', function(message) {
 			     	    c.say(usernick, "\u0002" + codes.orange +" !time " + codes.dark_red +" -- " + codes.reset + " Shows the current time for the bot.");
 			     	    c.say(usernick, "\u0002" + codes.orange +" !date " + codes.dark_red +" -- " + codes.reset + " Shows the current date for the bot.");
 			     	    c.say(usernick, "\u0002" + codes.orange +" !8ball [question] " + codes.dark_red +" -- " + codes.reset + " Let the 8 ball answer your questions :)");
-			     	    c.say(usernick, "\u0002" + codes.orange +" !ccstatus " + codes.dark_red +" -- " + codes.reset + " Queries CookieCraft and shows various stats.");
-			     	    c.say(usernick, "\u0002" + codes.orange +" !videoinfo [url] " + codes.dark_red +" -- " + codes.reset + " Given a YouTube/Vimeo video URL, shows its name.");
+			     	    c.say(usernick, "\u0002" + codes.orange +" !mcstatus " + codes.dark_red +" -- " + codes.reset + " Queries CookieCraft and shows various stats.");
+			     	    c.say(usernick, "\u0002" + codes.orange +" !videoname [url] " + codes.dark_red +" -- " + codes.reset + " Given a YouTube/Vimeo video URL, shows its name.");
 			     	    c.say(usernick, "\u0002" + codes.orange +" !chuck  " + codes.dark_red + " -- " + codes.reset + " Get an instant Chuck Norris joke");
 			     	    c.say(usernick, "\u0002" + codes.dark_blue +"---------------------------------------------------------");
 			     	    sendToLog(ansicodes.blue + "[INFO] " + ansicodes.reset + ansicodes.yellow + usernick + " issued bot command: !guacahelp" + ansicodes.reset);
@@ -293,7 +306,10 @@ c.addListener('raw', function(message) {
 			     	    sendToLog(ansicodes.blue + "[INFO] " + ansicodes.reset + ansicodes.yellow + usernick + " issued bot command: !8ball with argument: " + arg + ansicodes.reset);
                         comCount = comCount + 2;
                     }
-                } else if (/^!ccstatus$/.test(reccMsg)) {
+                // Bukkit flavour 2:
+                // Simple Minecraft server query tool
+                // You can configure it in the config.json
+                } else if (/^!mcstatus$/.test(reccMsg)) {
                     if (isLockdownDisabled){
 			            // I'll explain this command for being pretty hard to understand:
 			            // This search for a config.json file and, if exists, returns its config. Else, returns default values.
@@ -406,9 +422,6 @@ c.addListener('error', function(message) { sendToLog('error: ' + message) });
 
 c.addListener('join', function(channel,nick,message) {
 	sendToLog(ansicodes.red + "[" + ansicodes.reset + ansicodes.yellow + channel + ansicodes.reset + ansicodes.red + "] " + ansicodes.reset + ansicodes.green + nick + " joined " + channel + ansicodes.reset);
-	if(nick == "BriCookie") {
-		c.say(channel, "Hey Bri! GuacaBot salutes you!");
-	}
 });
 c.addListener("part", function(channel,nick,reason) {
 	sendToLog(ansicodes.red + "[" + ansicodes.reset + ansicodes.yellow + channel + ansicodes.reset + ansicodes.red + "] " + ansicodes.reset + ansicodes.cyan + nick + " left " + channel + " (" + reason + ")" + ansicodes.reset);
