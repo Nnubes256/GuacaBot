@@ -1,0 +1,12 @@
+{
+	"host":"irc.alphachat.net",
+	"nickname":"GuacaBot",
+	"channels":["#CookieCraft","#CookieCoffee"],
+	"username":"MrGuaca",
+	"realname":"The bot of Nacho",
+	"mcquery":{
+		"host":"server.cookiecrafters.co.uk",
+	    "port": 25565
+	},
+	"commandPrefix": "!"
+}

@@ -1,0 +1,11 @@
+{
+  "name": "GuacaBot",
+  "subdomain": "guacabot",
+  "scripts": {
+    "start": "GuacaBot.js"
+  },
+  "version": "0.1.6-3",
+  "engines": {
+    "node": "0.8.x"
+  }
+}

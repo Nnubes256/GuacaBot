@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Online chat</title>
+        <script src="/socket.io/socket.io.js"></script>
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet"/>
+        <script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+        <style>
+            p {
+                color: rgb(0,255,0);
+                font-family: "Courier","monospace";
+                margin: 0px -120px 0px;
+            }
+            body {
+                background-color: rgb(0,0,0);
+                display: block;
+            }
+        </style>
+        <script type="text/javascript">
+        <!--
+        // aquí ponemos la IP PÚBLICA
+        var websocket = io.connect("http://localhost");
+        function insertAfter(referenceNode, newNode) {referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);}
+        ansicodes = {
+        'reset': '\033[0m',
+        'bold': '\033[1m',
+        'italic': '\033[3m',
+        'underline': '\033[4m',
+        'blink': '\033[5m',
+        'black': '\033[30m',
+        'red': '\033[31m',
+        'green': '\033[32m',
+        'yellow': '\033[33m',
+        'blue': '\033[34m',
+        'magenta': '\033[35m',
+        'cyan': '\033[36m',
+        'white': '\033[37m',
+        }
+         
+        window.onload = function() {
+            websocket.on("sendEvent", function(data){
+                var chat = document.getElementById('zchat');
+                var span = document.createElement('p');
+                var txt = document.createTextNode(data.text);
+                span.appendChild(txt);
+                if(chat.hasChildNodes())
+                    insertAfter(chat.lastChild,span);
+                else
+                    chat.appendChild(span);
+            });
+        };
+        //-->
+        </script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div id="zchat" class="container" style="color: rgb(0,255,0);"></div>
+        </div>
+    </body>
+</html>
