@@ -1,6 +1,7 @@
 var app = require('http').createServer(handler)
   , io = require('socket.io').listen(app)
   , fs = require('fs')
+  , Convert = require('ansi-to-html');
 app.listen(130);
 
 var ansicodes = {
@@ -17,11 +18,10 @@ var ansicodes = {
 'magenta': '\033[35m',
 'cyan': '\033[36m',
 'white': '\033[37m',
-}
+};
 
 function handler (req, res) {
-  fs.readFile(__dirname + '/index.html',
-  function (err, data) {
+  fs.readFile(__dirname + '/index.html',function (err, data) {
     if (err) {
       res.writeHead(500);
       return res.end('Error loading index.html');
@@ -34,6 +34,7 @@ function handler (req, res) {
 
 io.sockets.on('connection', function (socket) {
   socket.on('newMessage', function (data) {
+    var parsedData = colorHandler(data);
     socket.emit('sendEvent',data);
   });
   socket.on('scriptMsg', function(data){
@@ -43,3 +44,8 @@ io.sockets.on('connection', function (socket) {
 var test = setInterval(function(){
   io.sockets.emit('sendEvent',{"type":"Info","catText":"Hooray!","text":"WOOO!"});
 },10000);
+
+var colorHandler = function(str) {
+  var convert = new Convert();
+  return convert.toHtml(str);
+};
