@@ -207,7 +207,6 @@ c.addListener('raw', function(message) {
                     if (isLockdownDisabled){
 			     	    c.say(toChan,"\u0002" + codes.dark_red + "H" + codes.light_red + "e" + codes.orange + "l" + codes.yellow + "l" + codes.light_green + "o " + codes.dark_green + "W" + codes.light_blue + "o" + codes.dark_blue + "r" + codes.light_magenta + "l" + codes.magenta + "d" + codes.dark_red + "!");
 			     	    sendToLog(ansicodes.blue + "[INFO] " + ansicodes.reset + ansicodes.yellow + usernick + " issued bot command: !hello" + ansicodes.reset);
-			     	    sendToLog("[INFO] " + usernick + " issued bot command: !hello");
                         comCount++;
                     }
                 } else if (/^!eatnacho$/.test(reccMsg)) {
