@@ -52,7 +52,7 @@ app.listen(150);
 io.set('log level', 0);
 
 function handler (req, res) {
-  fs.readFile(__dirname + '/index.html',
+  fs.readFile(path.resolve('./ws/index.html'),
   function (err, data) {
     if (err) {
       res.writeHead(500);
@@ -73,9 +73,6 @@ var irc  = require('./lib/irc.js');
 
 // Utils from Node.js
 var util = require('util');
-
-// Used for logging on files (fs = filesystem)
-var fs = require("fs");
 
 // Minecraft Server query library
 var Query = require('./lib/mcquery.js');
