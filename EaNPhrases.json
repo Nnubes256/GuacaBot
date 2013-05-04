@@ -1,29 +1,5 @@
 {
 	"main":{
-	    // Hello. This is a JSON file.
-	    // Here, you can add your phrase/phrase collections for the !eatnacho command.
-	    // If you know how JSON goes out, just learn the syntax and you're done for make phrases.
-	    // Else, READ THIS FIRST:
-	    // First, you need to know the syntax:
-	    // 
-	    // "{COLLECTION NAME}": {
-	    //    "phrases":[
-	    //        "{phrase1}", <-- ADD A COMMA BETWEEN EVERY PHRASE
-	    //        "{phrase2}",
-	    //        "{phrase3}"
-	    //     ]
-	    // }, <--- ADD THE COMMA AFTER THE BRACKET!
-	    //
-	    // The labels with {} need to be replaced with stuff. For example, {COLLECTION NAME} should be replaced with the collection name (without the {}).
-	    // In "enabled", you must put true or false, WITHOUT the ".
-	    // "{phrase1}","{phrase2}"... are the phrases separated by commas. They must be inside brackets, like in the syntax example.
-	    //
-	    // You can add "tags" that are replaced by the bot automaticly for variables
-	    // The list of tags is:
-	    //
-	    // {RANDOMUSER} -- Replaced by a random user connected on the same channel where !eatnacho is called
-	    //
-	    // In the "basic" collection, you'll see how this is made:
 	    "basic":{
 	    	"phrases":[
 	    	    "and nothing occurs.", 
@@ -33,6 +9,5 @@
 	    	    "and the nacho becomes invsible."
 	    	]
 	    },
-	    // Add more collections from here
 	}
 }
