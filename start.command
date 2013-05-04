@@ -1,3 +1,3 @@
 #!/bin/bash
 cd "$( dirname "$0" )"
-node GuacaBot.js
+sudo node GuacaBot.js
