@@ -341,8 +341,6 @@ c.addListener('raw', function(message) {
 			     		c.say("Usage: !videoname <video url>");
 			     		sendToLog(ansicodes.blue + "[INFO]" + ansicodes.yellow + usernick + " issued bot command: !videoname with result: Ignored (no argument).")
 			     	}
-<<<<<<< HEAD
-			     	comCount += config.commands.videoname.antispammer;
 			    } else if(/^!chuck$/.test(reccMsg) && config.commands.chuck.enabled && isLockdownDisabled) {
                     http.get("http://api.icndb.com/jokes/random?escape=javascript?exclude=" + config.commands.chuck.exclude, function(res) {
                     	var body = '';
@@ -366,33 +364,6 @@ c.addListener('raw', function(message) {
                         res.on("error", function(e){
                         	c.say(config.commands.chuck.messages.onConnectErr);
                         	sendToLog(ansicodes.blue + "[INFO] " + ansicodes.yellow + usernick + " issued bot command: !chuck with result: Connect error: " + e);
-=======
-			    } else if(/^!chuck$/.test(reccMsg)) {
-			    	if (isLockdownDisabled){
-                        http.get("http://api.icndb.com/jokes/random?escape=javascript?exclude=[explicit]", function(res) {
-                        	var body = '';
-                        	res.on("data",function(chunk){
-                        		body += chunk;
-                        	});
-                            res.on("end",function(){
-                          	    var fullRes = JSON.parse(body);
-                          	    if(fullRes.type == "success") {
-                          	    	var joke = fullRes.value.joke;
-                          	    	var jokeNumber = fullRes.value.id;
-                          	    	var finalJoke = joke.replace(/&(lt|gt|quot);/g, function (m, p) {
-                          	    		return (p == "lt") ? "<" : ((p == "gt") ? ">" : "'");
-                          	    	});
-                          	    	c.say(toChan,"Num. " + jokeNumber + ": " + finalJoke);
-                          	    	sendToLog("[INFO] " + usernick + " issued bot command: !chuck with result: Success (joke number " + jokeNumber + ")");
-                          	    } else {
-                          	    	c.say("I think there was an error getting the joke, so try again later.");
-                          	    	sendToLog("[INFO] " + usernick + " issued bot command: !chuck with result: DB error: The response type wasn't 'success'.");
-                          	    }
-                            }).on("error", function(e){
-                            	c.say("The Chuck Norris joke database appears to be unreachable :(. Try again later");
-                            	sendToLog(ansicodes.blue + "[INFO] " + ansicodes.reset + ansicodes.yellow + usernick + " issued bot command: !chuck with result: Connect error: " + e + ansicodes.reset);
-                            });
->>>>>>> Now !chuck replaces quotes before echoing the joke. Fixes #2.
                         });
                     });
                     comCount += config.commands.chuck.antispammer;
