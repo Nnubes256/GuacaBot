@@ -4,9 +4,55 @@
 	"channels":["#CookieCoffee"],
 	"username":"MrGuaca",
 	"realname":"The bot of Nacho",
-	"mcquery":{
-		"host":"server.cookiecrafters.co.uk",
-	    "port": 25565
+	"commands":{
+		"hello":{
+			"enabled": true,
+			"antispammer":1
+		},
+		"eatnacho":{
+			"enabled": true,
+			"antispammer":1
+		},
+		"hour":{
+			"enabled": true,
+			"antispammer":1
+		},
+		"date":{
+			"enabled": true,
+			"antispammer":1
+		},
+		"eigthball":{
+			"enabled": true,
+			"antispammer":2
+		},
+		"mcstatus":{
+			"enabled": false,
+			"host": "server.cookiecrafters.co.uk",
+			"port": 25565,
+			"antispammer":3
+		},
+		"videoname":{
+			"enabled": true,
+			"antispammer":2,
+			"messages":{
+				"onName":"Name: {NAME}",
+				"onErr":"There was an error: {ERR}"
+			}
+		},
+		"chuck":{
+			"enabled": true,
+			"exclude": ["explicit"],
+			"antispammer":2,
+			"messages":{
+				"onJoke":"Num. {NUMBER}: {JOKE}",
+				"onDBErr":"I think there was an error getting the joke, so try again later.",
+				"onConnectErr":"The Chuck Norris joke database appears to be unreachable :(. Try again later."
+			}
+		}
 	},
-	"commandPrefix": "!"
+	"triggers":{
+		"mcircjoin": {
+			"enabled": false
+		}
+	},
 }
