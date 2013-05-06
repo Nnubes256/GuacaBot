@@ -341,6 +341,7 @@ c.addListener('raw', function(message) {
 			     		c.say("Usage: !videoname <video url>");
 			     		sendToLog(ansicodes.blue + "[INFO]" + ansicodes.yellow + usernick + " issued bot command: !videoname with result: Ignored (no argument).")
 			     	}
+			     	comCount += config.commands.videoname.antispammer;
 			    } else if(/^!chuck$/.test(reccMsg) && config.commands.chuck.enabled && isLockdownDisabled) {
                     http.get("http://api.icndb.com/jokes/random?escape=javascript?exclude=" + config.commands.chuck.exclude, function(res) {
                     	var body = '';
