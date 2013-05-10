@@ -84,8 +84,14 @@ var http = require("http");
 // ############################
 // ##         Bot base       ##
 // ############################
+// Password label at config handling
+var pass = null;
+if(config.password != "" || null || undefined) {
+	pass = config.password;
+}
+
 // Bot creation and connection
-var c = new irc.Client(config.host,config.nickname,{channels: config.channels,stripColors: true,userName: config.username,realName: config.realname});
+var c = new irc.Client(config.host,config.nickname,{channels: config.channels,stripColors: true,userName: config.username,realName: config.realname, password: pass});
 
 // Anti-spammer stuff
 var comCount = 0;
