@@ -4,7 +4,6 @@
 	"channels":["#CookieCoffee"],
 	"username":"MrGuaca",
 	"realname":"The bot of Nacho",
-	"password":"",
 	"commands":{
 		"hello":{
 			"enabled": true,
