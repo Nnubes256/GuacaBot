@@ -50,6 +50,7 @@
 			}
 		}
 	},
+	"logging":false,
 	"triggers":{
 		"mcircjoin": {
 			"enabled": false

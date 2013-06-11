@@ -184,6 +184,7 @@ c.addListener('raw', function(message) {
 					}
 				}
 				if(/^!guacahelp$/.test(reccMsg) && isLockdownDisabled) {
+					c.say(usernick, "\u0002" + codes.dark_blue +"--------------------- " + codes.orange + "GuacaBot Help" + codes.dark_blue + " -----------------------");
 					if(config.commands.hello.enabled) {c.say(usernick, "\u0002" + codes.orange +" !hello  " + codes.dark_red + " -- " + codes.reset + " Makes the bot say 'Hello World!'");}
 					if(config.commands.eatnacho.enabled) {c.say(usernick, "\u0002" + codes.orange +" !eatnacho " + codes.dark_red +" -- " + codes.reset + " Makes the bot eat a nacho.");}
 					if(config.commands.hour.enabled) {c.say(usernick, "\u0002" + codes.orange +" !hour " + codes.dark_red +" -- " + codes.reset + " Shows the current time for the bot.");}
@@ -399,10 +400,12 @@ var colorStrip = function (str) {
 var sendToLog = function(message) {
 	console.log(message);
 	var parsedMsg = colorStrip(message);
-	fs.open('GuacaLogOutput.log', 'a', function( e, id ) {
-		fs.write( id, parsedMsg+'\n', null, 'utf8', function(){
-			fs.close(id, function(){ });
+	if(config.logging === true) {
+		fs.open('GuacaLogOutput.log', 'a', function( e, id ) {
+			fs.write( id, parsedMsg+'\n', null, 'utf8', function(){
+				fs.close(id, function(){ });
+			});
 		});
-	});
+	}
 	io.sockets.emit('sendEvent',{"text":parsedMsg});
 }
