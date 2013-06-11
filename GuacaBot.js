@@ -4,7 +4,7 @@
 // ## ---------------------- ##
 // ## IRC/Shell Color charts ##
 // ############################
-ansicodes = {
+var ansicodes = {
 'reset': '\033[0m',
 'bold': '\033[1m',
 'italic': '\033[3m',
@@ -19,7 +19,7 @@ ansicodes = {
 'cyan': '\033[36m',
 'white': '\033[37m',
 };
-codes = {
+var codes = {
 	white: '\u000300',
 	black: '\u000301',
 	dark_blue: '\u000302',
@@ -50,16 +50,14 @@ app.listen(150);
 io.set('log level', 1);
 
 function handler (req, res) {
-  fs.readFile(path.resolve('./ws/index.html'),
-  function (err, data) {
-	if (err) {
-	  res.writeHead(500);
-	  return res.end('Error loading index.html');
-	}
-
-	res.writeHead(200);
-	res.end(data);
-  });
+    fs.readFile(path.resolve('./ws/index.html'),function (err, data) {
+        if (err) {
+            res.writeHead(500);
+            return res.end('Error loading index.html');
+        }
+        res.writeHead(200);
+        res.end(data);
+    });
 }
 // ############################
 // ##        Requires        ##
@@ -110,9 +108,6 @@ var minusComCount = setInterval(function(){
 // ############################
 c.addListener('raw', function(message) { 
 	var command = message.command;
-	var commandType = message.commandType;
-	var msgArgs = message.args;
-	var rawCommand = message.rawCommand;
 	switch(command) {
 		// ############################
 		// ##       Input Sorter     ##
@@ -154,7 +149,7 @@ c.addListener('raw', function(message) {
 		// If it is a normal chat message
 		case "PRIVMSG":
 			// Extra check: Verify if the nick that sends the message isn't undefined. If it is, break
-			if(message.nick != undefined) {
+			if(message.nick !== undefined) {
 				var usernick = message.nick;
 				var reccMsg = message.args[1];
 				var toChan = message.args[0];
@@ -165,7 +160,7 @@ c.addListener('raw', function(message) {
 				// Just set triggers.mcircjoin.enabled to true and, at the regular expression, replace the word "connnected" by the connecting message.
 				// For example, if your message is {user} joined the game, change "connected" for "joined the game".
 				// Also, remind that this function DOESN'T SUPPORT ANY TYPE OF NICK. It will only read the valid Minecraft usernames.
-				if(/^[A-ZFa-z0-9_-]{3,16} connected$/.test(reccMsg) && config.triggers.mcircjoin.enabled) {
+				if(/^[A-ZFa-z0-9_\-]{3,16} connected$/.test(reccMsg) && config.triggers.mcircjoin.enabled) {
 					var helperSplit = reccMsg.split(" ");
 					var userConnected = helperSplit[0];
 					switch(userConnected) {
@@ -234,11 +229,11 @@ c.addListener('raw', function(message) {
 					sendToLog(ansicodes.blue + "[INFO] " + ansicodes.yellow + usernick + " issued bot command: !date");
 					comCount += config.commands.date.antispammer;
 				} else if ((/^!8ball$/.test(reccMsg) || /^!8ball /.test(reccMsg)) && isLockdownDisabled && config.commands.eigthball.enabled) {
-					var EigthBallWithArgs = false;
+					var EightBallWithArgs = false;
 					var arg = null;
-					if(/^!8ball$/.test(reccMsg) || /^!8ball +/.test(reccMsg) || "!8ball" == reccMsg != true) {
+					if(/^!8ball$/.test(reccMsg) || /^!8ball +/.test(reccMsg) || "!8ball" == reccMsg !== true) {
 						arg = reccMsg.substr(reccMsg.indexOf(" ") + 1);
-						EightballWithArgs = true;
+						EightBallWithArgs = true;
 					}
 					var ballLines = [
 					"Ask again later",
@@ -282,7 +277,7 @@ c.addListener('raw', function(message) {
 					
 					// The main stuff:
 					// Connect to server and receive data
-					query.connect( function(err){
+					query.connect(function(err){
 						// TODO: Better error handling
 						// If there's an error while doing the ping
 						if(err){
@@ -292,38 +287,37 @@ c.addListener('raw', function(message) {
 							c.say(usernick, "-------------------");
 							sendToLog(ansicodes.blue + "[INFO] " + ansicodes.yellow + usernick + " issued bot command: !ccstatus with result: Timeout Error");
 						} else {
-							query.basic_stat(statCallback);
+							query.basic_stat(function(err, stat){
+                                // This function gets the data made by query.connect and sends it to the player
+                                if(err){
+                                    // TODO: Better error handling
+                                    console.error(err);
+                                } else {
+                                    // Here, we store in variables the MOTD, the number of players connected
+                                    // and the max players that the server can handle
+                                    var motd = stat.MOTD;
+                                    var numPlayers = stat.numplayers;
+                                    var maxPlayers = stat.maxplayers;
+                                    c.say(usernick, "-------------------");
+                                    c.say(usernick, "Server Status: Online");
+                                    c.say(usernick, "Players: " + numPlayers + "/" + maxPlayers);
+                                    c.say(usernick, "Server List MOTD: \'" + motd + "\'");
+                                    c.say(usernick, "-------------------");
+                                    sendToLog(ansicodes.blue + "[INFO] " + ansicodes.yellow + usernick + " issued bot command: !ccstatus with result: Online, " + numPlayers + "/" + maxPlayers + ", \'" + motd + "'");
+                                }
+                                reqcount--;
+                                if(reqcount<1){
+                                    query.close();
+                                }			
+                            });
 						}
-					});	
-					// This function gets the data made by query.connect and sends it to the player
-					function statCallback(err, stat){
-						if(err){
-							// TODO: Better error handling
-							console.error(err);
-						} else {
-							// Here, we store in variables the MOTD, the number of players connected 
-							// and the max players that the server can handle
-							var motd = stat.MOTD;
-							var numPlayers = stat.numplayers;
-							var maxPlayers = stat.maxplayers;
-							c.say(usernick, "-------------------");
-							c.say(usernick, "Server Status: Online");
-							c.say(usernick, "Players: " + numPlayers + "/" + maxPlayers);
-							c.say(usernick, "Server List MOTD: \'" + motd + "\'");
-							c.say(usernick, "-------------------");
-							sendToLog(ansicodes.blue + "[INFO] " + ansicodes.yellow + usernick + " issued bot command: !ccstatus with result: Online, " + numPlayers + "/" + maxPlayers + ", \'" + motd + "'");
-						}
-						reqcount--;
-						if(reqcount<1){
-							query.close();
-						}
-					};
+					});
 					comCount += config.commands.mcstatus.antispammer;
 				} else if((/^!videoname$/.test(reccMsg) || /^!videoname /.test(reccMsg)) && isLockdownDisabled && config.commands.videoname.enabled) {
 					var VIWithArgs = false;
 					var VIArg = null;
 					var onNameReplace = null;
-					if(/^!videoname$/.test(reccMsg) || /^!videoname +/.test(reccMsg) || "!videoname" == reccMsg != true) {
+					if(/^!videoname$/.test(reccMsg) || /^!videoname +/.test(reccMsg) || "!videoname" == reccMsg !== true) {
 						VIArg = reccMsg.substr(reccMsg.indexOf(" ") + 1);
 						VIWithArgs = true;
 					} if (VIWithArgs) {
@@ -340,12 +334,13 @@ c.addListener('raw', function(message) {
 						});
 					} else {
 						c.say("Usage: !videoname <video url>");
-						sendToLog(ansicodes.blue + "[INFO]" + ansicodes.yellow + usernick + " issued bot command: !videoname with result: Ignored (no argument).")
+						sendToLog(ansicodes.blue + "[INFO]" + ansicodes.yellow + usernick + " issued bot command: !videoname with result: Ignored (no argument).");
 					}
 					comCount += config.commands.videoname.antispammer;
 				} else if(/^!chuck$/.test(reccMsg) && config.commands.chuck.enabled && isLockdownDisabled) {
 					http.get("http://api.icndb.com/jokes/random?escape=javascript?exclude=" + config.commands.chuck.exclude, function(res) {
 						var body = '';
+                        var fullRes;
 						res.on("data",function(chunk){
 							body += chunk;
 						});
@@ -362,7 +357,7 @@ c.addListener('raw', function(message) {
 								c.say(config.commands.chuck.messages.onDBErr);
 								sendToLog(ansicodes.blue + "[INFO] " + ansicodes.yellow + usernick + " issued bot command: !chuck with result: DB error: The response type wasn't 'success'.");
 							}
-						})
+						});
 						res.on("error", function(e){
 							c.say(config.commands.chuck.messages.onConnectErr);
 							sendToLog(ansicodes.blue + "[INFO] " + ansicodes.yellow + usernick + " issued bot command: !chuck with result: Connect error: " + e);
@@ -375,11 +370,15 @@ c.addListener('raw', function(message) {
 				}
 			} else {
 				break;
-			};
+			}
+            // Lets be cautious
+            break;
 	default:
 		break;
 	}
 });
+
+// TODO: Better error handling
 c.addListener('error', function(message) { sendToLog('error: ' + message) });
 
 c.addListener('join', function(channel,nick,message) {
@@ -395,8 +394,8 @@ c.addListener("kick", function(channel, nick, by, reason) {
 	sendToLog(ansicodes.red + "[" + ansicodes.yellow + channel + ansicodes.red + "] " + ansicodes.blue + nick + " was kicked by " + by + " (" + reason + ")");
 });
 var colorStrip = function (str) {
-  return str.replace(/\033\[[0-9;]*m/g, '')
-}
+  return str.replace(/\033\[[0-9;]*m/g, '');
+};
 var sendToLog = function(message) {
 	console.log(message);
 	var parsedMsg = colorStrip(message);
@@ -408,4 +407,4 @@ var sendToLog = function(message) {
 		});
 	}
 	io.sockets.emit('sendEvent',{"text":parsedMsg});
-}
+};
