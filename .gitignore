@@ -3,3 +3,6 @@ _build/
 htmltest.js
 GuacaLogOutput.log
 .DS_Store
+swearwords.json
+lib/videoinfo/.DS_Store
+lib/.DS_Store
