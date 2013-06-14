@@ -76,7 +76,7 @@ var path = require('path');
 var config = require(path.resolve('./config.json'));
 
 // Libraries used by !videoname
-var vi = require("./lib/videoinfo/lib/main.js");
+var vi = require("videoinfo");
 var http = require("http");
 
 // ############################
@@ -231,7 +231,7 @@ c.addListener('raw', function(message) {
 				} else if ((/^!8ball$/.test(reccMsg) || /^!8ball /.test(reccMsg)) && isLockdownDisabled && config.commands.eigthball.enabled) {
 					var EightBallWithArgs = false;
 					var arg = null;
-					if(/^!8ball$/.test(reccMsg) || /^!8ball +/.test(reccMsg) || "!8ball" == reccMsg !== true) {
+					if(/^!8ball$/.test(reccMsg) || /^!8ball +/.test(reccMsg) || "!8ball" != reccMsg) {
 						arg = reccMsg.substr(reccMsg.indexOf(" ") + 1);
 						EightBallWithArgs = true;
 					}
@@ -314,17 +314,15 @@ c.addListener('raw', function(message) {
 					});
 					comCount += config.commands.mcstatus.antispammer;
 				} else if((/^!videoname$/.test(reccMsg) || /^!videoname /.test(reccMsg)) && isLockdownDisabled && config.commands.videoname.enabled) {
-					var VIWithArgs = false;
-					var VIArg = null;
-					var onNameReplace = null;
-					if(/^!videoname$/.test(reccMsg) || /^!videoname +/.test(reccMsg) || "!videoname" == reccMsg !== true) {
+					var VIWithArgs, VIArg, onNameReplace, onFetchError = null;
+					if(/^!videoname$/.test(reccMsg) || /^!videoname +/.test(reccMsg) || "!videoname" != reccMsg) {
 						VIArg = reccMsg.substr(reccMsg.indexOf(" ") + 1);
 						VIWithArgs = true;
-					} if (VIWithArgs) {
+					} if (VIArg !== "!videoname") {
 						vi.fetch(VIArg, function(err,data){
 							if(err){
-								var onFetchError = (config.commands.videoname.messages.onErr).replace(/\{ERR\}/g,err);
-								sendToLog(ansicodes.blue + "[INFO] " + ansicodes.yellow + usernick + " issued bot command: !videoname with argument: " + VIArg + " and result: Error:" + err);
+								onFetchError = (config.commands.videoname.messages.onErr).replace(/\{ERR\}/g,err);
+								sendToLog(ansicodes.blue + "[INFO] " + ansicodes.yellow + usernick + " issued bot command: !videoname with argument: " + VIArg + " and result: " + err);
 								c.say(toChan,onFetchError);
 							} else {
 								onNameReplace = (config.commands.videoname.messages.onName).replace(/\{NAME\}/g,data.title);
@@ -333,7 +331,7 @@ c.addListener('raw', function(message) {
 							}
 						});
 					} else {
-						c.say("Usage: !videoname <video url>");
+						c.say(toChan,"Usage: !videoname <video url>");
 						sendToLog(ansicodes.blue + "[INFO]" + ansicodes.yellow + usernick + " issued bot command: !videoname with result: Ignored (no argument).");
 					}
 					comCount += config.commands.videoname.antispammer;

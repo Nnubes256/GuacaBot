@@ -1,4 +1,3 @@
-node_modules/
 _build/
 htmltest.js
 GuacaLogOutput.log
@@ -7,3 +6,4 @@ swearwords.json
 lib/videoinfo/.DS_Store
 lib/.DS_Store
 .c9revisions/
+node_modules/
