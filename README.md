@@ -13,7 +13,16 @@ Features
 * Complete, simple-to-learn JSON **config**.
 * Socket.io based **web interface** for watch console output **real-time**(pretty buggy, sorry).
 
-Notes
+Installation notes
+--------
+Descompress the downloaded ZIP to a folder, open the terminal and type:
+````
+$ cd <FULL_PATH_TO_FOLDER_HERE>
+$ npm install
+````
+For start on Mac OS X, use the start.command. For Windows/Unix, `sudo node GuacaBot.js`. This needs confirmation from a computer administrator. If you can't use `sudo`, disable the webserver at the config and `node GuacaBot.js`.
+
+Extra notes
 --------
 This is a project mostly made for fun. Don't think of this as a serious project, so don't send me thousands of hard-to-make ideas.
 When sending one, provide some code for make your idea easier to implement oficially.
