@@ -1,57 +1,57 @@
 {
-	"host":"irc.alphachat.net",
-	"nickname":"GuacaBot",
-	"channels":["#CookieCoffee"],
-	"username":"MrGuaca",
-	"realname":"The bot of Nacho",
-	"commands":{
-		"hello":{
+	"host": "irc.alphachat.net",
+	"nickname": "GuacaBot",
+	"channels": ["#CookieCoffee"],
+	"username": "MrGuaca",
+	"realname": "The bot of Nacho",
+	"commands": {
+		"hello": {
 			"enabled": true,
-			"antispammer":1
+			"antispammer": 1
 		},
-		"eatnacho":{
+		"eatnacho": {
 			"enabled": true,
-			"antispammer":1
+			"antispammer": 1
 		},
-		"hour":{
+		"hour": {
 			"enabled": true,
-			"antispammer":1
+			"antispammer": 1
 		},
-		"date":{
+		"date": {
 			"enabled": true,
-			"antispammer":1
+			"antispammer": 1
 		},
-		"eigthball":{
+		"eigthball": {
 			"enabled": true,
-			"antispammer":2
+			"antispammer": 2
 		},
-		"mcstatus":{
+		"mcstatus": {
 			"enabled": false,
 			"host": "server.cookiecrafters.co.uk",
 			"port": 25565,
-			"antispammer":3
+			"antispammer": 3
 		},
-		"videoname":{
+		"videoname": {
 			"enabled": true,
-			"antispammer":2,
-			"messages":{
-				"onName":"Name: {NAME}",
-				"onErr":"There was an error: {ERR}"
+			"antispammer": 2,
+			"messages": {
+				"onName": "Name: {NAME}",
+				"onErr": "There was an error: {ERR}"
 			}
 		},
-		"chuck":{
+		"chuck": {
 			"enabled": true,
 			"exclude": ["explicit"],
-			"antispammer":2,
-			"messages":{
-				"onJoke":"Num. {NUMBER}: {JOKE}",
-				"onDBErr":"I think there was an error getting the joke, so try again later.",
-				"onConnectErr":"The Chuck Norris joke database appears to be unreachable :(. Try again later."
+			"antispammer": 2,
+			"messages": {
+				"onJoke": "Num. {NUMBER}: {JOKE}",
+				"onDBErr": "I think there was an error getting the joke, so try again later.",
+				"onConnectErr": "The Chuck Norris joke database appears to be unreachable :(. Try again later."
 			}
 		}
 	},
-	"logging":false,
-	"triggers":{
+	"logging": false,
+	"triggers": {
 		"mcircjoin": {
 			"enabled": false
 		}
