@@ -20,7 +20,7 @@ Descompress the downloaded ZIP to a folder, open the terminal and type:
 $ cd <FULL_PATH_TO_FOLDER_HERE>
 $ npm install
 ````
-For start on Mac OS X, use the start.command. For Windows/Unix, `sudo node GuacaBot.js`. This needs confirmation from a computer administrator. If you can't use `sudo`, disable the webserver at the config and `node GuacaBot.js`.
+For start on OSX/Linux, use `sudo start.sh`. For Windows, `node GuacaBot.js` as Administrator. If you can't use `sudo`, disable the webserver at the config and `start.sh` or `node GuacaBot.js`.
 
 Extra notes
 --------

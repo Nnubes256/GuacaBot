@@ -48,14 +48,18 @@
             }
         </style>
         <script type="text/javascript">
-        <!--
-        // aquí ponemos la IP PÚBLICA
-        var websocket = io.connect("http://localhost");
-        function insertAfter(referenceNode, newNode) {referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);}
-         
+        var IP = "http://localhost"; // Change to the right IP if needed
+        var websocket = io.connect(IP);
+        function insertAfter(referenceNode, newNode) {
+            referenceNode.parentNode.insertBefore(
+                newNode,
+                referenceNode.nextSibling
+            );
+        }
+
         window.onload = function() {
             websocket.on("sendEvent", function(data){
-                var chat = document.getElementById('zchat');
+                var chat = document.getElementById('console');
                 var span = document.createElement('p');
                 var txt = document.createTextNode(data.text);
                 span.appendChild(txt);
@@ -71,7 +75,7 @@
     </head>
     <body>
         <div class="container-fluid">
-            <div id="zchat" class="container" style="color: rgb(0,255,0);"></div>
+            <div id="console" class="container" style="color: rgb(0,255,0);"></div>
         </div>
     </body>
 </html>
